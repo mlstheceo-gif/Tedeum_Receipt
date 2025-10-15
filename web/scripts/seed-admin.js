@@ -4,15 +4,15 @@ const bcrypt = require("bcrypt");
 async function main() {
   const prisma = new PrismaClient();
   try {
-    const username = "TEDadmin";
-    const password = "TEDadmin";
+    const username = "TEDledger";
+    const password = "TEDledger";
     const existing = await prisma.user.findUnique({ where: { username } });
     if (!existing) {
       const hashed = await bcrypt.hash(password, 10);
       await prisma.user.create({ data: { username, password: hashed, email: null } });
-      console.log("Admin user created: TEDadmin");
+      console.log("Admin user created: TEDledger");
     } else {
-      console.log("Admin user already exists: TEDadmin");
+      console.log("Admin user already exists: TEDledger");
     }
   } finally {
     await prisma.$disconnect();
