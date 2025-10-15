@@ -1,4 +1,4 @@
-// SQLite를 기본으로 사용. 추후 PostgreSQL로 교체 가능
+// PostgreSQL 사용 (Vercel 호환)
 // 초심자 주석: Prisma는 DB 스키마를 코드로 정의하는 ORM입니다.
 
 generator client {
@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
