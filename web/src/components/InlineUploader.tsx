@@ -15,7 +15,10 @@ export default function InlineUploader() {
       const fd = new FormData();
       fd.append("file", file);
       const up = await fetch("/api/receipts/upload", { method: "POST", body: fd });
-      if (!up.ok) throw new Error("업로드 실패");
+      if (!up.ok) {
+        const errorData = await up.text();
+        throw new Error(`업로드 실패: ${up.status} - ${errorData}`);
+      }
       const data: { id: string } = await up.json();
       setStatus("분석 중...");
       const parse = await fetch("/api/receipts/parse", {
@@ -23,11 +26,15 @@ export default function InlineUploader() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ receiptId: data.id }),
       });
-      if (!parse.ok) throw new Error("분석 실패");
+      if (!parse.ok) {
+        const errorData = await parse.text();
+        throw new Error(`분석 실패: ${parse.status} - ${errorData}`);
+      }
       setStatus("완료!");
       router.refresh(); // 새로고침 없이 서버 컴포넌트 재패치
       setStatus("");
     } catch (e) {
+      console.error("Upload error:", e);
       setStatus((e as Error).message || "오류");
     }
   }
