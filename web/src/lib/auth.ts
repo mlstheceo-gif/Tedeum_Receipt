@@ -18,7 +18,7 @@ export async function login(username: string, password: string) {
   if (!user) return null;
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) return null;
-  const token = jwt.sign({ uid: user.id, username: user.username }, process.env.JWT_SECRET!, { expiresIn: "7d" });
+  const token = jwt.sign({ uid: user.id, username: user.username }, process.env.JWT_SECRET || "default-secret-key-tedeum-receipt-2025", { expiresIn: "7d" });
   (await cookies()).set({ name: COOKIE_NAME, value: token, httpOnly: true, sameSite: "lax", path: "/" });
   return user;
 }
@@ -31,7 +31,7 @@ export async function getSession() {
   const token = (await cookies()).get(COOKIE_NAME)?.value;
   if (!token) return null;
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as { uid: string; username: string };
+    const payload = jwt.verify(token, process.env.JWT_SECRET || "default-secret-key-tedeum-receipt-2025") as { uid: string; username: string };
     return payload;
   } catch {
     return null;
