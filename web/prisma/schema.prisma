@@ -1,0 +1,45 @@
+// SQLite를 기본으로 사용. 추후 PostgreSQL로 교체 가능
+// 초심자 주석: Prisma는 DB 스키마를 코드로 정의하는 ORM입니다.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountCategory {
+  FOOD
+  TRANSPORT
+  GROCERIES
+  UTILITIES
+  ENTERTAINMENT
+  HEALTHCARE
+  EDUCATION
+  OTHER
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique @default(cuid())
+  email     String?  @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  receipts  Receipt[]
+}
+
+model Receipt {
+  id             String          @id @default(cuid())
+  ownerId        String
+  owner          User            @relation(fields: [ownerId], references: [id])
+  imagePath      String
+  merchant       String
+  amountKRW      Int
+  account        AccountCategory
+  receiptDate    DateTime?
+  parsedRawJson  Json
+  createdAt      DateTime        @default(now())
+}
