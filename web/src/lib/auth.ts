@@ -14,13 +14,22 @@ export async function register(username: string, password: string, email?: strin
 }
 
 export async function login(username: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { username } });
-  if (!user) return null;
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return null;
-  const token = jwt.sign({ uid: user.id, username: user.username }, process.env.JWT_SECRET || "default-secret-key-tedeum-receipt-2025", { expiresIn: "7d" });
-  (await cookies()).set({ name: COOKIE_NAME, value: token, httpOnly: true, sameSite: "lax", path: "/" });
-  return user;
+  try {
+    const user = await prisma.user.findUnique({ where: { username } });
+    if (!user) return null;
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return null;
+    
+    const jwtSecret = process.env.JWT_SECRET || "default-secret-key-tedeum-receipt-2025";
+    console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET);
+    
+    const token = jwt.sign({ uid: user.id, username: user.username }, jwtSecret, { expiresIn: "7d" });
+    (await cookies()).set({ name: COOKIE_NAME, value: token, httpOnly: true, sameSite: "lax", path: "/" });
+    return user;
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
 }
 
 export async function logout() {
