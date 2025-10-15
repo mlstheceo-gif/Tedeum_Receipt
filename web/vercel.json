@@ -3,10 +3,5 @@
     "src/app/api/**/*.ts": {
       "maxDuration": 30
     }
-  },
-  "build": {
-    "env": {
-      "DATABASE_URL": "file:/tmp/dev.db"
-    }
   }
 }
