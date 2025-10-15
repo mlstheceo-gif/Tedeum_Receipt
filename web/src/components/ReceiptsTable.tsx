@@ -5,7 +5,10 @@ type Item = { id: string; merchant: string; amountKRW: number; account: string; 
 
 const accounts = ["FOOD","TRANSPORT","GROCERIES","UTILITIES","ENTERTAINMENT","HEALTHCARE","EDUCATION","OTHER"] as const;
 
-function toPublicUrl(p: string) { return "/" + p.replace(/^public\//, ""); }
+function toPublicUrl(p: string) { 
+  // Vercel에서는 API를 통해 이미지 서빙
+  return `/api/image?path=${encodeURIComponent(p)}`;
+}
 function fmtDate(d?: string | Date | null) {
   if (!d) return ""; // date input에는 빈 문자열 허용
   const date = typeof d === "string" ? new Date(d) : d;

@@ -25,14 +25,14 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // 기본 사용자 디렉터리 사용 (로그인 없이)
-    const userDir = path.join(process.cwd(), process.env.UPLOAD_DIR ?? "uploads", "default");
+    // Vercel에서는 /tmp 디렉터리 사용
+    const userDir = path.join("/tmp", "uploads", "default");
     console.log("Upload directory:", userDir);
     ensureDir(userDir);
     const ext = path.extname(file.name) || ".jpg";
     const filename = `${crypto.randomUUID()}${ext}`;
     const savedPath = saveBufferToFile(userDir, filename, buffer);
-    const relPath = path.relative(process.cwd(), savedPath);
+    const relPath = path.relative("/tmp", savedPath);
     console.log("File saved to:", relPath);
 
     // 기본 사용자 ID 사용 (TEDledger 사용자)
